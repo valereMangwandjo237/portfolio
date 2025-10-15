@@ -50,31 +50,34 @@
   });
 
   function php_email_form_submit(thisForm, action, formData) {
-    fetch(action, {
-      method: 'POST',
-      body: formData,
-      headers: {'X-Requested-With': 'XMLHttpRequest'}
-    })
-    .then(response => {
-      if( response.ok ) {
-        return response.text();
-      } else {
-        throw new Error(`${response.status} ${response.statusText} ${response.url}`); 
-      }
-    })
-    .then(data => {
-      thisForm.querySelector('.loading').classList.remove('d-block');
-      if (data.trim() == 'OK') {
-        thisForm.querySelector('.sent-message').classList.add('d-block');
-        thisForm.reset(); 
-      } else {
-        throw new Error(data ? data : 'Form submission failed and no error message returned from: ' + action); 
-      }
-    })
-    .catch((error) => {
-      displayError(thisForm, error);
-    });
-  }
+  fetch(action, {
+    method: 'POST',
+    body: formData,
+    headers: {'Accept': 'application/json'}
+  })
+  .then(response => response.json())
+  .then(data => {
+    thisForm.querySelector('.loading').classList.remove('d-block');
+
+    if (data.ok) {
+      // Affiche le message de succès
+      thisForm.querySelector('.sent-message').classList.add('d-block');
+      thisForm.querySelector('.sent-message').innerHTML = "Message envoyé avec succès ! Merci de m’avoir contacté !";
+      thisForm.reset(); 
+    } else {
+      // Affiche les erreurs éventuelles
+      thisForm.querySelector('.error-message').classList.add('d-block');
+      thisForm.querySelector('.error-message').innerHTML = data.error || "Erreur lors de l'envoi du formulaire.";
+    }
+  })
+  .catch((error) => {
+    thisForm.querySelector('.loading').classList.remove('d-block');
+    thisForm.querySelector('.error-message').classList.add('d-block');
+    thisForm.querySelector('.error-message').innerHTML = "Erreur lors de l'envoi du formulaire.";
+    console.error(error);
+  });
+}
+
 
   function displayError(thisForm, error) {
     thisForm.querySelector('.loading').classList.remove('d-block');
