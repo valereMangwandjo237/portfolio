@@ -5,10 +5,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 
-// Active l'affichage des erreurs pour débogage (à retirer en production)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // Vérifie que la requête vient bien du formulaire
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
